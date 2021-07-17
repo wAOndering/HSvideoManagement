@@ -9,7 +9,7 @@ The main objective is to obtain readable video that can be compressed while reta
 ## Process 
 1. Acquire highspeed video with StreamPix (Norpix software) as `*.seq` file
 2. Use batch conversion utilities from StreamPix (Norpix software) to convert `*.seq` to `*.avi`
-3. Convert/encode the `*.avi` to `*.mp4` using (ffmpeg)[https://ffmpeg.org/]
+3. Convert/encode the `*.avi` to `*.mp4` using [ffmpeg](https://ffmpeg.org/)
 	- windows open `cmd`
 	- go to the folder (with `cd`) where the script `avi2mp4.py` is located
 	- run the script `python avi2mp4.py`
@@ -30,8 +30,8 @@ The main objective is to obtain readable video that can be compressed while reta
 	`-video_track_timescale`: force the tbn value
 
 1. slice the video with `sliceForWhisk.py`
-2. use (git Bash)[https://gitforwindows.org/]
-3. setup GNU parallel for Windows (see)[https://www.gnu.org/software/parallel/], *TODO: complete the doc for install*
+2. use [git Bash](https://gitforwindows.org/)
+3. setup GNU parallel for Windows [see](https://www.gnu.org/software/parallel/), *TODO: complete the doc for install*
 4. run bash script for parallel analysis of the task
 	*TODO: complete and improve the script*
 	*TODO: better naming convention*

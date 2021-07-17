@@ -1,5 +1,5 @@
-(link1)[https://www.cyberciti.biz/faq/how-to-run-command-or-code-in-parallel-in-bash-shell-under-linux-or-unix] 
-(link2)[https://zenodo.org/record/1146014]
+[link1](https://www.cyberciti.biz/faq/how-to-run-command-or-code-in-parallel-in-bash-shell-under-linux-or-unix)
+[link2](https://zenodo.org/record/1146014)
 
 
 # for file name ref
