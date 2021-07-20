@@ -45,9 +45,61 @@ def tmpFct(file):
     subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 500 -qscale:v 10 -codec:a copy -video_track_timescale 500 '+ newi , shell=True)
     print(file, newi)
 
+def filestoReDo(filesList, lowlim = 100*10**6):
+    sizeAll = []
+    for i in filesList:
+        size = os.path.getsize(i)
+        dat = pd.DataFrame({'fileName': [i], 'size': [size]})
+        # print(dat)
+        sizeAll.append(dat)
 
+    sizeAll = pd.concat(sizeAll)
+    deletelist = list(sizeAll.loc[sizeAll['size'] <= lowlim, 'fileName'])
+
+    redolist= []
+    for i in deletelist:
+        tmp = i.split('.')[0]+'.avi'
+        os.remove(i)
+        redolist.append(tmp)
+
+
+    return redolist, deletelist
+
+
+    ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    ''' Conversion note 
+    -codec:v : mpeg4 necessary to be able to have good fps tbn tbr matching
+    -r: enables to have the frame rate of intres
+    -qscale:v: this is the quality of the video
+    -codec:a: needed to have audio codec
+    -video_track_timescale: force the tbn value
+    '''
+    ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 500 -qscale:v 10 -codec:a copy -video_track_timescale 500 '+ newi , shell=True)
+    print(file, newi)
+
+
+##################### USER INPUT #########################################
+## to convert all the avi 
 mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
 files = glob.glob(mainPath+'/**/*.avi')
+
+## to redo the files
+# mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
+# files = glob.glob(mainPath+'/**/*.mp4')
+# files, deletelist = filestoReDo(files)
+
+
+## to redo the files
+# files = ['Y:\\Sheldon\\Highspeed\\not_analyzed\\WDIL009\\close_position\\35_l.avi',
+#  'Y:\\Sheldon\\Highspeed\\not_analyzed\\WDIL009\\close_position\\36_d.avi',
+#  'Y:\\Sheldon\\Highspeed\\not_analyzed\\WDIL009\\close_position\\36_l.avi',
+#  'Y:\\Sheldon\\Highspeed\\not_analyzed\\WDIL009\\close_position\\37_d.avi',
+#  'Y:\\Sheldon\\Highspeed\\not_analyzed\\WDIL009\\close_position\\37_l.avi',
+#  'Y:\\Sheldon\\Highspeed\\not_analyzed\\WDIL009\\close_position\\38_d.avi',
+#  'Y:\\Sheldon\\Highspeed\\not_analyzed\\WDIL009\\close_position\\38_l.avi',
+#  'Y:\\Sheldon\\Highspeed\\not_analyzed\\WDIL009\\close_position\\39_d.avi']
+##################### USER INPUT #########################################
 
 with concurrent.futures.ProcessPoolExecutor() as executor:
     if __name__ == '__main__':

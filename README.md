@@ -23,11 +23,11 @@ The main objective is to obtain readable video that can be compressed while reta
 	- encoding is critical to have tbc, tbn and tbr consistent (see whisk issues [here](https://github.com/nclack/whisk/issues/35))  
 
 **key points for ffmpeg usage:**
-	`-codec:v`: mpeg4 necessary to be able to have good fps tbn tbr matching
-	`-r`: enables to have the frame rate of intres
-	`-qscale:v`: this is the quality of the video
-	`-codec:a`: needed to have audio codec
-	`-video_track_timescale`: force the tbn value
+	`-codec:v`: mpeg4 necessary to be able to have good fps tbn tbr matching  
+	`-r`: enables to have the frame rate of intres  
+	`-qscale:v`: this is the quality of the video  
+	`-codec:a`: needed to have audio codec  
+	`-video_track_timescale`: force the tbn value  
 
 1. slice the video with `sliceForWhisk.py`
 2. use [git Bash](https://gitforwindows.org/)

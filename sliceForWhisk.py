@@ -27,70 +27,67 @@ def convert(secondsInput):
     # the milliseconds formating below does not provide exact slicing of the video 
     #"%02d:%02d:%#06.3f" % (hour, minutes, seconds) 
 
+class mp4ToSlice:
+    '''
+    work on class of object to be able to extract all the information from the video to be able to be sliced
+    '''
+    def __init__(self, file):
+        '''initial method that takes the file of  interest to be able to be recovered '''
+        self.file = file # name of the file
+        self.aid = file.split(os.sep)[-1].split('_')[0]
 
-mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009\close_position\close_bonsai_dark'
-# mainPath = '/run/user/1000/gvfs/smb-share:server=ishtar,share=millerrumbaughlab/Sheldon/Highspeed/not_analyzed/WDIL009/close_position/close_bonsai_dark' 
+        pathFolder = file.split(os.sep)
+        self.folder = os.sep.join(pathFolder[:-1])
 
+    def getTimeFiles(self):
+        if 'd' in self.file.split(os.sep)[-1]:
+            pathTotime = glob.glob(self.folder+os.sep+'*dark*')[0]
+        elif 'l' in self.file.split(os.sep)[-1]:
+            pathTotime = glob.glob(self.folder+os.sep+'*light*')[0]
 
-files = glob.glob(mainPath+os.sep+'**/*.csv', recursive=True)
+        # get the files 
+        a = pd.read_csv(glob.glob(pathTotime+os.sep+self.aid+os.sep+'*pole*.csv')[0])
+        a = a.iloc[0]
+        a = pd.DataFrame({'dat':a.reset_index(drop=True)})
+        a = a[a['dat'] != True]
 
-files = [x for x in files if os.sep+'34'+os.sep in x]
+        b = pd.read_csv(glob.glob(pathTotime+os.sep+self.aid+os.sep+'*eye_cam*.csv')[0])
+        zeroDat = b.iloc[0,1]
+        a['normTime_sec'] = a['dat']-zeroDat
+        a['normFrame'] = (a['normTime_sec']*500).astype(int)
+        a['poleStatus'] = poleStatus = ['in', 'out']*3
 
+        # this is to accomodate a 3 seconds jitter around the point of interest
+        # that can be necessary due to the 
+        a.loc[a['poleStatus']=='in','normFrameCorrected'] = a.loc[a['poleStatus']=='in','normFrame']-5*500
+        a.loc[a['poleStatus']=='out','normFrameCorrected'] = a.loc[a['poleStatus']=='out','normFrame']+5*500
 
+        # convert the data frame to be able to extract the time for which the video should be chuncked
+        a = pd.merge(a, (a['normFrameCorrected']/500).apply(lambda x: pd.Series(convert(x), index =['timeSlice', 'normFrameCorrectedFFMPEG'])), how='inner', left_index=True, right_index=True)
+        a['ephochPole'] = [1,1,2,2,3,3]
 
-
-poleStatus = ['in', 'out']*3
-
-# def reformatPoleTime(pdDF):
-
-a = pd.read_csv(files[0])
-a = a.iloc[0]
-a = pd.DataFrame({'dat':a.reset_index(drop=True)})
-a = a[a['dat'] != True]
-
-
-b = pd.read_csv(files[1])
-zeroDat = b.iloc[0,1]
-a['normTime_sec'] = a['dat']-zeroDat
-a['normFrame'] = (a['normTime_sec']*500).astype(int)
-a['poleStatus'] = poleStatus = ['in', 'out']*3
-
-# this is to accomodate a 3 seconds jitter around the point of interest
-# that can be necessary due to the 
-a.loc[a['poleStatus']=='in','normFrameCorrected'] = a.loc[a['poleStatus']=='in','normFrame']-5*500
-a.loc[a['poleStatus']=='out','normFrameCorrected'] = a.loc[a['poleStatus']=='out','normFrame']+5*500
-
-# convert the data frame to be able to extract the time for which the video should be chuncked
-a = pd.merge(a, (a['normFrameCorrected']/500).apply(lambda x: pd.Series(convert(x), index =['timeSlice', 'normFrameCorrectedFFMPEG'])), how='inner', left_index=True, right_index=True)
-a['ephochPole'] = [1,1,2,2,3,3]
-
-
-
+        return a
 
 # get the series of time 
-for i in range(1,4):
-    print(i)
-    tmp = a.loc[a['ephochPole'] == i, 'timeSlice'].values
-    tmpRef = a.loc[a['ephochPole'] == i, 'normFrameCorrectedFFMPEG'].values.astype(int)
-    testFile = r'C:\Users\Windows\Desktop\cutTestFUll\34_d.mp4'
-    newName = os.sep.join(testFile.split(os.sep)[:-1])+os.sep+testFile.split(os.sep)[-1].split('.')[0]+'_p'+str(i)+'_'+str(tmpRef[0])+'-'+str(tmpRef[1])+'.mp4'
-    print(newName)
+def conversionSlice(fileName):
 
+    t = mp4ToSlice(fileName)
+    timePoleEpoch = t.getTimeFiles()
 
-    subprocess.call('ffmpeg -i ' + testFile + ' -codec:v mpeg4 -r 500 -qscale:v 10 -codec:a copy -ss '+ tmp[0]+ ' -to '  +tmp[1] +' '+ newName , shell=True)
+    for i in range(1,4):
+        print(i)
+        tmp = timePoleEpoch.loc[timePoleEpoch['ephochPole'] == i, 'timeSlice'].values
+        tmpRef = timePoleEpoch.loc[timePoleEpoch['ephochPole'] == i, 'normFrameCorrectedFFMPEG'].values.astype(int)
+        testFile = t.file
+        newName = os.sep.join(testFile.split(os.sep)[:-1])+os.sep+testFile.split(os.sep)[-1].split('.')[0]+'_p'+str(i)+'_'+str(tmpRef[0])+'-'+str(tmpRef[1])+'.mp4'
+        print(newName)
+        subprocess.call('ffmpeg -i ' + testFile + ' -codec:v mpeg4 -r 500 -qscale:v 10 -codec:a copy -video_track_timescale 500 -ss '+ tmp[0]+ ' -to '  +tmp[1] +' '+ newName , shell=True)
 
+##################333 USER INPUT ###########################
+mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
+files = glob.glob(mainPath+'/**/*.mp4')
+##################333 USER INPUT ###########################
 
-
-
-
-
-
-
-
-# subprocess.call('ffmpeg -i '+tmp+' -ss 01:08:10 -to 01:23:00 cut_'+tmp, shell=True)
-
-# testFile = r'C:\Users\Windows\Desktop\cutTestFUll\34_d.mp4'
-# newName = os.sep.join(testFile.split(os.sep)[:-1])+os.sep+testFile.split(os.sep)[-1].split('.')[0]+'_p'+str(i)+'_'+str(tmpRef[0])+'-'+str(tmpRef[1])+'.mp4'
-
-# testFile = r'C:\Users\Windows\Desktop\cutTestFUll\34_d.mp4'
-# newName = testFile.split(os.sep)[0]+testFile.split(os.sep)[-1]
+with concurrent.futures.ProcessPoolExecutor() as executor:
+    if __name__ == '__main__':
+        executor.map(conversionSlice, files)
