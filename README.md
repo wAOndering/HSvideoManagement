@@ -13,7 +13,8 @@ The main objective is to obtain readable video that can be compressed while reta
 	- windows open `cmd`
 	- go to the folder (with `cd`) where the script `avi2mp4.py` is located
 	- run the script `python avi2mp4.py`
-	- this enables the conversion of 14Tb --> 0.04Tb (44Gb) overnight CPU based with IntelCore i9-9820X CPU @ 3.30GHz 10 cores. The `mpeg4` encoding is not suported with GPU encoding.
+	- for `-qscale:v 10` this enables the conversion of 14Tb --> 0.04Tb (44Gb) overnight CPU based with IntelCore i9-9820X CPU @ 3.30GHz 10 cores. The `mpeg4` encoding is not suported with GPU encoding.
+	- for `-qscale:v 4` this enables the conversion of 14Tb --> 0.04Tb (44Gb) overnight CPU based with IntelCore i9-9820X CPU @ 3.30GHz 10 cores. The `mpeg4` encoding is not suported with GPU encoding.
 
 ## Downstream analysis
 
@@ -25,13 +26,14 @@ The main objective is to obtain readable video that can be compressed while reta
 **key points for ffmpeg usage:**
 	`-codec:v`: mpeg4 necessary to be able to have good fps tbn tbr matching  
 	`-r`: enables to have the frame rate of intres  
-	`-qscale:v`: this is the quality of the video  
+	`-qscale:v`: this is the quality of the video (from 1 highest quality/larger file to 31 smallest quality/smaller file)  
 	`-codec:a`: needed to have audio codec  
 	`-video_track_timescale`: force the tbn value  
 
 1. slice the video with `sliceForWhisk.py`
 2. use [git Bash](https://gitforwindows.org/)
 3. setup GNU parallel for Windows [see](https://www.gnu.org/software/parallel/), *TODO: complete the doc for install*
+	- [tutorial](https://www.gnu.org/software/parallel/parallel_tutorial.html)
 4. run bash script for parallel analysis of the task
 	*TODO: complete and improve the script*
 	*TODO: better naming convention*

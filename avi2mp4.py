@@ -42,7 +42,7 @@ def tmpFct(file):
     -video_track_timescale: force the tbn value
     '''
     ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 500 -qscale:v 10 -codec:a copy -video_track_timescale 500 '+ newi , shell=True)
+    subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 500 -qscale:v 4 -codec:a copy -video_track_timescale 500 '+ newi , shell=True)
     print(file, newi)
 
 def filestoReDo(filesList, lowlim = 100*10**6):
@@ -75,7 +75,7 @@ def filestoReDo(filesList, lowlim = 100*10**6):
     -video_track_timescale: force the tbn value
     '''
     ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 500 -qscale:v 10 -codec:a copy -video_track_timescale 500 '+ newi , shell=True)
+    subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 500 -qscale:v 4 -codec:a copy -video_track_timescale 500 '+ newi , shell=True)
     print(file, newi)
 
 
@@ -85,8 +85,9 @@ mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
 files = glob.glob(mainPath+'/**/*.avi')
 
 ## to redo the files
-# mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
-# files = glob.glob(mainPath+'/**/*.mp4')
+# mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009\close_position'
+# files = glob.glob(mainPath+'/28_d*.avi')
+# print(files)
 # files, deletelist = filestoReDo(files)
 
 

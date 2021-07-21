@@ -15,6 +15,8 @@ import pandas as pd
 import glob
 import os
 import subprocess
+import concurrent.futures
+import time
 
 def convert(secondsInput): 
     seconds = secondsInput % (24 * 3600) 
@@ -46,25 +48,37 @@ class mp4ToSlice:
             pathTotime = glob.glob(self.folder+os.sep+'*light*')[0]
 
         # get the files 
-        a = pd.read_csv(glob.glob(pathTotime+os.sep+self.aid+os.sep+'*pole*.csv')[0])
-        a = a.iloc[0]
-        a = pd.DataFrame({'dat':a.reset_index(drop=True)})
-        a = a[a['dat'] != True]
+        timeFilesa = glob.glob(pathTotime+os.sep+self.aid+os.sep+'*pole*.csv')
+        if timeFilesa == []:
+            a = pd.DataFrame({'normFrameCorrectedFFMPEG':[57000.0, 119500.0, 177000.0, 239500.0, 297000.0, 359500.0]})
+            a['ephochPole'] = [1,1,2,2,3,3]
+            a['timeSlice'] = ['00:01:54', '00:03:59', '00:05:54', '00:07:59', '00:09:54', '00:11:59']
+        
+        else:
+            a = pd.read_csv(timeFilesa[0])
+            
+            if a.shape != (1, 12):
+            # this is to correct for the file type that is present some have are 1x12 others are 3x4
+                 a = pd.DataFrame({'dat':a.iloc[:,[1,3]].values.flatten()})
 
-        b = pd.read_csv(glob.glob(pathTotime+os.sep+self.aid+os.sep+'*eye_cam*.csv')[0])
-        zeroDat = b.iloc[0,1]
-        a['normTime_sec'] = a['dat']-zeroDat
-        a['normFrame'] = (a['normTime_sec']*500).astype(int)
-        a['poleStatus'] = poleStatus = ['in', 'out']*3
+            a = a.iloc[0]
+            a = pd.DataFrame({'dat':a.reset_index(drop=True)})
+            a = a[a['dat'] != True]
 
-        # this is to accomodate a 3 seconds jitter around the point of interest
-        # that can be necessary due to the 
-        a.loc[a['poleStatus']=='in','normFrameCorrected'] = a.loc[a['poleStatus']=='in','normFrame']-5*500
-        a.loc[a['poleStatus']=='out','normFrameCorrected'] = a.loc[a['poleStatus']=='out','normFrame']+5*500
+            b = pd.read_csv(glob.glob(pathTotime+os.sep+self.aid+os.sep+'*eye_cam*.csv')[0])
+            zeroDat = b.iloc[0,1]
+            a['normTime_sec'] = a['dat']-zeroDat
+            a['normFrame'] = (a['normTime_sec']*500).astype(int)
+            a['poleStatus'] = poleStatus = ['in', 'out']*3
 
-        # convert the data frame to be able to extract the time for which the video should be chuncked
-        a = pd.merge(a, (a['normFrameCorrected']/500).apply(lambda x: pd.Series(convert(x), index =['timeSlice', 'normFrameCorrectedFFMPEG'])), how='inner', left_index=True, right_index=True)
-        a['ephochPole'] = [1,1,2,2,3,3]
+            # this is to accomodate a 3 seconds jitter around the point of interest
+            # that can be necessary due to the 
+            a.loc[a['poleStatus']=='in','normFrameCorrected'] = a.loc[a['poleStatus']=='in','normFrame']-5*500
+            a.loc[a['poleStatus']=='out','normFrameCorrected'] = a.loc[a['poleStatus']=='out','normFrame']+5*500
+
+            # convert the data frame to be able to extract the time for which the video should be chuncked
+            a = pd.merge(a, (a['normFrameCorrected']/500).apply(lambda x: pd.Series(convert(x), index =['timeSlice', 'normFrameCorrectedFFMPEG'])), how='inner', left_index=True, right_index=True)
+            a['ephochPole'] = [1,1,2,2,3,3]
 
         return a
 
@@ -81,11 +95,15 @@ def conversionSlice(fileName):
         testFile = t.file
         newName = os.sep.join(testFile.split(os.sep)[:-1])+os.sep+testFile.split(os.sep)[-1].split('.')[0]+'_p'+str(i)+'_'+str(tmpRef[0])+'-'+str(tmpRef[1])+'.mp4'
         print(newName)
-        subprocess.call('ffmpeg -i ' + testFile + ' -codec:v mpeg4 -r 500 -qscale:v 10 -codec:a copy -video_track_timescale 500 -ss '+ tmp[0]+ ' -to '  +tmp[1] +' '+ newName , shell=True)
+        subprocess.call('ffmpeg -i ' + testFile + ' -codec:v mpeg4 -r 500 -qscale:v 4 -codec:a copy -video_track_timescale 500 -ss '+ tmp[0]+ ' -to '  +tmp[1] +' '+ newName , shell=True)
 
 ##################333 USER INPUT ###########################
-mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
-files = glob.glob(mainPath+'/**/*.mp4')
+# mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
+# files = glob.glob(mainPath+'/**/*.mp4')
+
+mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009\middle_position'
+files = glob.glob(mainPath+os.sep+'25_d.avi')
+print(files)
 ##################333 USER INPUT ###########################
 
 with concurrent.futures.ProcessPoolExecutor() as executor:
