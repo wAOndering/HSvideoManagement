@@ -35,9 +35,10 @@ The main objective is to obtain readable video that can be compressed while reta
 3. setup GNU parallel for Windows [see](https://www.gnu.org/software/parallel/), *TODO: complete the doc for install*
 	- [tutorial](https://www.gnu.org/software/parallel/parallel_tutorial.html)
 4. run bash script for parallel analysis of the task
-	*TODO: complete and improve the script*
-	*TODO: better naming convention*
-	*TODO: run script one after the other*
+	- see [`bashForWhisk.sh` ](https://github.com/wAOndering/HSvideoManagement/blob/main/bashForWhisk.sh)
+	- *TODO: complete and improve the script*
+	- *TODO: better naming convention*
+	- *TODO: run script one after the other*
 
 
 
