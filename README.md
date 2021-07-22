@@ -32,7 +32,8 @@ The main objective is to obtain readable video that can be compressed while reta
 
 1. slice the video with `sliceForWhisk.py`
 2. use [git Bash](https://gitforwindows.org/)
-3. setup GNU parallel for Windows [see](https://www.gnu.org/software/parallel/), *TODO: complete the doc for install*
+3. setup GNU parallel for Windows [see](https://www.gnu.org/software/parallel/)
+	- for install see []
 	- [tutorial](https://www.gnu.org/software/parallel/parallel_tutorial.html)
 4. run bash script for parallel analysis of the task
 	- see [`bashForWhisk.sh` ](https://github.com/wAOndering/HSvideoManagement/blob/main/bashForWhisk.sh)
