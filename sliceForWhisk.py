@@ -61,9 +61,10 @@ class mp4ToSlice:
             # this is to correct for the file type that is present some have are 1x12 others are 3x4
                  a = pd.DataFrame({'dat':a.iloc[:,[1,3]].values.flatten()})
 
-            a = a.iloc[0]
-            a = pd.DataFrame({'dat':a.reset_index(drop=True)})
-            a = a[a['dat'] != True]
+            else:
+                a = a.iloc[0]
+                a = pd.DataFrame({'dat':a.reset_index(drop=True)})
+                a = a[a['dat'] != True]
 
             b = pd.read_csv(glob.glob(pathTotime+os.sep+self.aid+os.sep+'*eye_cam*.csv')[0])
             zeroDat = b.iloc[0,1]
@@ -99,7 +100,7 @@ def conversionSlice(fileName):
 
 ##################333 USER INPUT ###########################
 mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
-files = glob.glob(mainPath+'/**/*.mp4')
+files = glob.glob(mainPath+'\\middle_position\\*.mp4')
 ##################333 USER INPUT ###########################
 
 with concurrent.futures.ProcessPoolExecutor() as executor:
