@@ -14,7 +14,7 @@ The main objective is to obtain readable video that can be compressed while reta
 	- go to the folder (with `cd`) where the script `avi2mp4.py` is located
 	- run the script `python avi2mp4.py`
 	- for `-qscale:v 10` this enables the conversion of 14Tb --> 0.04Tb (44Gb) overnight CPU based with IntelCore i9-9820X CPU @ 3.30GHz 10 cores. The `mpeg4` encoding is not suported with GPU encoding.
-	- for `-qscale:v 4` this enables the conversion of 14Tb --> 0.04Tb (44Gb) overnight CPU based with IntelCore i9-9820X CPU @ 3.30GHz 10 cores. The `mpeg4` encoding is not suported with GPU encoding.
+	- for `-qscale:v 4` this enables the conversion of 14Tb --> 0.19Tb (190Gb) overnight CPU based with IntelCore i9-9820X CPU @ 3.30GHz 10 cores. The `mpeg4` encoding is not suported with GPU encoding.
 
 ## Downstream analysis
 

@@ -3,8 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 
-mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
-files = glob.glob(mainPath+'/**/*.mp4')
+
 
 
 def commonElement(list1, list2, option='dext'):
@@ -31,6 +30,34 @@ def commonElement(list1, list2, option='dext'):
 		print('No none common element found')
 
 	return notcommonElem
+
+
+def getSize(filesList):
+	sizeAll = []
+	for i in filesList:
+	    size = os.path.getsize(i)
+	    dat = pd.DataFrame({'fileName': [i], 'size': [size]})
+	    # print(dat)
+	    sizeAll.append(dat)
+
+	sizeAll = pd.concat(sizeAll)
+	sumAll = sizeAll['size'].sum()*10**-12
+	print('The total file size is : ', sumAll, ' TB')
+
+	return sizeAll	
+
+def archiveDatFct(file):
+	'''
+	this function is to split a path into its useful components
+	''' 
+	customName = 'Archive'
+	fileSplit = file.split(os.sep)
+	os.makedirs(os.sep.join(fileSplit[:-2])+os.sep+customName+os.sep+fileSplit[-2], exist_ok=True)
+	archName = os.sep.join(fileSplit[:-2])+os.sep+customName+os.sep+os.sep.join(fileSplit[-2:])
+	
+	os.rename(file, archName)
+
+
 
 
 
@@ -87,3 +114,22 @@ mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
 
 for i in position:
     checkFileConversionAviMp4(mainPath, i)
+
+###################################################
+# to get and check the file size
+###################################################
+mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
+files = glob.glob(mainPath+'/**/*.mp4')
+getSize(files)
+files = glob.glob(mainPath+'/**/*.avi')
+getSize(files)
+
+
+###################################################
+# to move to archive
+###################################################
+mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
+files = glob.glob(mainPath+'/**/*.avi')
+
+for i in files:
+	archiveDatFct(i)

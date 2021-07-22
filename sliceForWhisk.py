@@ -98,12 +98,8 @@ def conversionSlice(fileName):
         subprocess.call('ffmpeg -i ' + testFile + ' -codec:v mpeg4 -r 500 -qscale:v 4 -codec:a copy -video_track_timescale 500 -ss '+ tmp[0]+ ' -to '  +tmp[1] +' '+ newName , shell=True)
 
 ##################333 USER INPUT ###########################
-# mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
-# files = glob.glob(mainPath+'/**/*.mp4')
-
-mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009\middle_position'
-files = glob.glob(mainPath+os.sep+'25_d.avi')
-print(files)
+mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
+files = glob.glob(mainPath+'/**/*.mp4')
 ##################333 USER INPUT ###########################
 
 with concurrent.futures.ProcessPoolExecutor() as executor:
