@@ -40,6 +40,8 @@ The main objective is to obtain readable video that can be compressed while reta
 	- *TODO: complete and improve the script*
 	- *TODO: better naming convention*
 	- *TODO: run script one after the other*
-
+5. important note for analysis  
+	- if error when saving missing segment use `Save As` instead of `Save`  
+	- alternatively re-run the begining of the analysis to have the proper detector binaries created within folder of interest
 
 

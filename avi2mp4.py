@@ -82,12 +82,12 @@ def filestoReDo(filesList, lowlim = 100*10**6):
 ##################### USER INPUT #########################################
 ## to convert all the avi 
 # mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
-mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\HS010_Rum2'
-files = glob.glob(mainPath+'/**/*.avi')
+# mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\HS010_Rum2'
+# files = glob.glob(mainPath+'/**/*.avi')
 
 ## to redo the files
-# mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009\close_position'
-# files = glob.glob(mainPath+'/28_d*.avi')
+mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009\close_position'
+files = glob.glob(r"Y:\Sheldon\Highspeed\not_analyzed\WDIL009\Archive\close_position\25_d.avi")
 # print(files)
 # files, deletelist = filestoReDo(files)
 
