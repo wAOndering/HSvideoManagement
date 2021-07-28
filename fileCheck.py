@@ -4,32 +4,47 @@ import pandas as pd
 import numpy as np
 
 
-
-
 def commonElement(list1, list2, option='dext'):
 	'''
 	function to identify common element in the list
 	option: 'dext' enables to look at the basefilename without the extension useful to check if the files
 	were in deed compressed
 	'''
+	if len(list1)<len(list2):
+		tmp = list1
+		list1 = list2
+		list2 = list1
+	
+	list1Name = os.path.dirname(list1[0]) 
+	list2Name = os.path.dirname(list2[0])
+	
 	if option == 'dext':
-		list1 = [x.split(os.sep)[-1].split('.')[0] for x in list1]
-		list2 = [x.split(os.sep)[-1].split('.')[0] for x in list1]
+		# modification takes care of multi period in the path 
+		list1 = [('.').join(x.split(os.sep)[-1].split('.')[:-1]) for x in list1]
+		list2 = [('.').join(x.split(os.sep)[-1].split('.')[:-1]) for x in list2]
+		# list1 = [x.split(os.sep)[-1].split('.')[0] for x in list1]
+		# list2 = [x.split(os.sep)[-1].split('.')[0] for x in list2]
 
 	commonElem = [x for x in list1 if x in list2]
 
 	print('There are', len(commonElem), 'out of', max(len(list1), len(list2)), 'files which are common')
+	print('For', list1Name, ':')
+	print(len(commonElem), 'out of', len(list1), 'files which are common')
+	print('For', list2Name, ':')
+	print(len(commonElem), 'out of', len(list2), 'files which are common')
 
-	notcommonElem = []
-	if max(len(list1), len(list2)) != len(commonElem):
-		notcommonElem = [x for x in list1 if x not in list2]
-		# alternatively could use np.setdiff1d(list1, list2)
-		print('None common element are:')
-		print(notcommonElem)
-	else:
-		print('No none common element found')
+	notcommonElem = [x for x in list2 if x not in list1]
+	# alternatively could use np.setdiff1d(list1, list2)
+	print('None common elements present in', list2Name, ' : ')
+	print(notcommonElem)
 
-	return notcommonElem
+
+	## toDel = [os.remove(''.join([list2Name,os.sep,x,'.avi'])) for x in commonElem]
+
+
+	# return notcommonElem
+
+
 
 
 def getSize(filesList):
