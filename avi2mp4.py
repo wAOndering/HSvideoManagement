@@ -21,7 +21,19 @@ def checkFileSize(listoffiles):
     return sizeAll
 
 def nameNew(fileName):
-    fileName = fileName.split('.')[0]+'.mp4'
+    newDir = 'Z:'
+    tmpStruc = fileName.split(os.sep)
+    tmptest = ['Z:']
+    for i in tmpStruc[1:-1]:
+        tmptest.append(i)
+        newdir = os.sep.join(tmptest)
+        # print(newdir)
+        os.makedirs(newdir, exist_ok = True)
+        # print(newdir)
+
+
+    fileName = fileName.split(os.sep)[-1].split('.')[0]+'.mp4'
+    fileName = newdir+os.sep+fileName
     # folderNameSplit = fileName.split(os.sep)
     # folderNameSplit = os.sep.join(folderNameSplit[1:-1])
     # fileName = fileName.split(os.sep)[-1].split('.')[0]+'.mp4'
@@ -42,7 +54,9 @@ def tmpFct(file):
     -video_track_timescale: force the tbn value
     '''
     ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 500 -qscale:v 4 -codec:a copy -video_track_timescale 500 '+ newi , shell=True)
+    # os.chdir(os.path.dirname(file))
+    # fileBN = file.split(os.sep)[-1]
+    subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 475 -qscale:v 4 -codec:a copy -video_track_timescale 475 '+ newi , shell=True)
     print(file, newi)
 
 def filestoReDo(filesList, lowlim = 100*10**6):
@@ -75,20 +89,20 @@ def filestoReDo(filesList, lowlim = 100*10**6):
     -video_track_timescale: force the tbn value
     '''
     ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 500 -qscale:v 4 -codec:a copy -video_track_timescale 500 '+ newi , shell=True)
+    subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 475 -qscale:v 4 -codec:a copy -video_track_timescale 475 '+ newi , shell=True)
     print(file, newi)
 
 
 ##################### USER INPUT #########################################
 ## to convert all the avi 
-# mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009'
-mainPath = r'Y:\Jessie\e3 - Data Analysis\e3 Data\allVideos\avi_Process'
-files = glob.glob(mainPath+'/*.avi')
+mainPath = r'C:\Users\Sheldon\OneDrive\Desktop\tomtest' # switch to input 
+mainOut = ['Z:'] ### need to change the main output drive
+#mainPath = r'E:\poleLocalizationcohort1_HSvids\HS1\1029'
+files = glob.glob(mainPath+'/**/*.avi', recursive=True)
 
-[x.replace("'", '"') for x in files]
 ## to redo the files
-# mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009\close_position'
-# files = glob.glob(r"Y:\Sheldon\Highspeed\not_analyzed\WDIL009\Archive\close_position\25_d.avi")
+#mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009\close_position'
+#files = glob.glob(r"Y:\Sheldon\Highspeed\not_analyzed\WDIL009\Archive\close_position\25_d.avi")
 # print(files)
 # files, deletelist = filestoReDo(files)
 
