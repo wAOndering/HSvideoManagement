@@ -8,6 +8,33 @@ import time
 # could be worht a read for future improvements
 # https://towardsdatascience.com/faster-video-processing-in-python-using-parallel-computing-25da1ad4a01
 
+
+
+##################### USER INPUT #########################################
+## to convert all the avi 
+
+print('')
+print('If the directories have spaces in the name that will create a problem')
+print('videos with spaces will be renamed to underscore')
+
+print('-------------------------------------------')
+print('Select the main folders where the videos are located')
+mainPath = input("Drag the FOLDER and press Enter:")
+mainPath = mainPath.replace('\\','/')
+mainPath = mainPath.replace('"','')
+
+print('')
+print('-------------------------------------------')
+fileFormat = input("Type of video files (eg: avi, mp4):")
+
+
+print('Select folder location')
+mainOut = input("The letter of the drive where videos should be saved. Note that the tree structure would be replacted (eg: Y)")
+mainOut = [mainOut+':']### need to change the main output drive
+files = glob.glob(mainPath+'/**/*.'+fileFormat, recursive=True)
+
+
+
 def checkFileSize(listoffiles):
     sizeAll = []
     for i in listoffiles:
@@ -20,10 +47,9 @@ def checkFileSize(listoffiles):
     print('file size is ', sizeAll, 'GB')
     return sizeAll
 
-def nameNew(fileName):
-    newDir = 'Z:'
+def nameNew(fileName, mainOut):
     tmpStruc = fileName.split(os.sep)
-    tmptest = ['Z:']
+    tmptest = mainOut
     for i in tmpStruc[1:-1]:
         tmptest.append(i)
         newdir = os.sep.join(tmptest)
@@ -31,19 +57,25 @@ def nameNew(fileName):
         os.makedirs(newdir, exist_ok = True)
         # print(newdir)
 
-
-    fileName = fileName.split(os.sep)[-1].split('.')[0]+'.mp4'
-    fileName = newdir+os.sep+fileName
+    ## convert all the files with spaces to files with underscore to 
+    ## enable proper function of ffmpeg if not then this would lead to an error
+    fileOri = fileName
+    fileNameDir = os.path.dirname(fileName)
+    fileName = fileName.split(os.sep)[-1].replace(" ", '_')
+    os.rename(fileOri, fileNameDir+os.sep+fileName)
+    nfileNameOri = fileNameDir+os.sep+fileName
+    nfileName = fileName.split(os.sep)[-1].split('.')[0]+'.mp4'
+    nfileName = newdir+os.sep+nfileName
     # folderNameSplit = fileName.split(os.sep)
     # folderNameSplit = os.sep.join(folderNameSplit[1:-1])
     # fileName = fileName.split(os.sep)[-1].split('.')[0]+'.mp4'
     # folderName = r'C:\Users\Windows\Desktop\SpeedUPVID'+os.sep+folderNameSplit
     # fileName = folderName+os.sep+fileName
     # os.makedirs(folderName, exist_ok=True)
-    return fileName
+    return nfileNameOri, nfileName
 
 def tmpFct(file):
-    newi = nameNew(file)
+    file, newi = nameNew(file, mainOut)
 
     ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     ''' Conversion note 
@@ -91,14 +123,6 @@ def filestoReDo(filesList, lowlim = 100*10**6):
     ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     subprocess.call('ffmpeg -i ' + file + ' -codec:v mpeg4 -r 475 -qscale:v 4 -codec:a copy -video_track_timescale 475 '+ newi , shell=True)
     print(file, newi)
-
-
-##################### USER INPUT #########################################
-## to convert all the avi 
-mainPath = r'C:\Users\Sheldon\OneDrive\Desktop\tomtest' # switch to input 
-mainOut = ['Z:'] ### need to change the main output drive
-#mainPath = r'E:\poleLocalizationcohort1_HSvids\HS1\1029'
-files = glob.glob(mainPath+'/**/*.avi', recursive=True)
 
 ## to redo the files
 #mainPath = r'Y:\Sheldon\Highspeed\not_analyzed\WDIL009\close_position'
